@@ -31,6 +31,7 @@ conditional checks, and debouncing.
 - **data-match:** Specifies conditions for the event to match.
 - **data-call:** Specifies the function to call when the event conditions are
   met.
+- **data-onload:** Request a form submission when the element is loaded.
 
 ## Examples
 

@@ -62,6 +62,18 @@ class FormSubscribe extends HTMLFormElement {
     }
 
     connectedCallback() {
+        if (this.hasAttribute('data-onload')) {
+            if (this.children.length) {
+                this.requestSubmit()
+            } else {
+                this._observer = new MutationObserver(() => {
+                    this.requestSubmit()
+                    this._observer.disconnect()
+                    this._observer = null
+                })
+                this._observer.observe(this, { childList: true })
+            }
+        }
         let event = this.dataset.event
         if (!event) return
         // @ts-ignore
