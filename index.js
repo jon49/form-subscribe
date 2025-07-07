@@ -47,44 +47,40 @@ function callFunction(functionName, self, ...args) {
     return
 }
 
-class FormSubscribe extends HTMLFormElement {
+class FormSubscribe {
 
-    constructor() {
-        super()
+    /**
+     * @param {HTMLElement} el 
+     */
+    constructor(el) {
+        this.el = el
+        /**
+         * @type {HTMLFormElement}
+         */
+        this.form =
+            el instanceof HTMLFormElement
+                ? el
+            // @ts-ignore
+            : el.form
+        if (!this.form) {
+            throw new Error("Element is not a form or does not have a form ancestor.")
+        }
         this._lastCalled = 0
-        this._interval = +(this.dataset.debounce || 0)
-        this._match = parseData(this.dataset.match)
-        this._notMatch = parseData(this.dataset.matchNot)
-        let el = this.dataset.targetEl
-        if (el) {
-            this.el = document.querySelector(el)
+        this._interval = +(el.dataset.debounce || 0)
+        this._match = parseData(el.dataset.match)
+        this._notMatch = parseData(el.dataset.matchNot)
+        let targetEl = el.dataset.targetEl
+        if (targetEl) {
+            this.targetEl = document.querySelector(targetEl)
         }
-    }
 
-    connectedCallback() {
-        if (this.hasAttribute('data-onload')) {
-            if (this.children.length) {
-                this.requestSubmit()
-            } else {
-                this._observer = new MutationObserver(() => {
-                    this.requestSubmit()
-                    this._observer.disconnect()
-                    this._observer = null
-                })
-                this._observer.observe(this, { childList: true })
-            }
+        if (el.hasAttribute('data-onload')) {
+            this.form.requestSubmit()
         }
-        let event = this.dataset.event
+        let event = el.dataset.event
         if (!event) return
         // @ts-ignore
         ;(this.el ?? document).addEventListener(event, this)
-    }
-
-    disconnectedCallback() {
-        let event = this.dataset.event
-        if (!event) return
-        // @ts-ignore
-        ;(this.el ?? document).removeEventListener(event, this)
     }
 
     /**
@@ -109,8 +105,8 @@ class FormSubscribe extends HTMLFormElement {
 
         this._lastCalled = Date.now()
 
-        let call = this.dataset.call
-        let action = this.dataset.action
+        let call = this.el.dataset.call
+        let action = this.el.dataset.action
         if (call) {
             callFunction(call, this, e)
         } else if (action) {
@@ -120,11 +116,11 @@ class FormSubscribe extends HTMLFormElement {
             // @ts-ignore
             this._action(e)
         } else {
-            this.requestSubmit()
+            this.form.requestSubmit()
         }
     }
 
 }
 
-customElements.define("form-subscribe", FormSubscribe, { extends: "form" })
-
+// @ts-ignore
+window.defineTrait?.("x-subscribe", FormSubscribe)

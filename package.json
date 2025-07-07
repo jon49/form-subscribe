@@ -1,6 +1,6 @@
 {
   "name": "form-subscribe",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A custom element to listen to events that aren't in the hierarchy of bubbling.",
   "bugs": {
     "url": "https://github.com/jon49/form-subscribe/issues"
@@ -25,6 +25,6 @@
     "built-in"
   ],
   "devDependencies": {
-    "esbuild": "^0.19.8"
+    "esbuild": "^0.25.6"
   }
 }

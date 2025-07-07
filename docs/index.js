@@ -1,7 +1,6 @@
 (() => {
   function parseData(data) {
-    if (!data)
-      return null;
+    if (!data) return null;
     return new Function(`return {${data}}`)();
   }
   function compare(base, other) {
@@ -19,40 +18,39 @@
     return true;
   }
   function callFunction(functionName, self, ...args) {
-    if (!functionName)
-      return;
+    if (!functionName) return;
     let scope = window;
     let scopeSplit = functionName.split(".");
     for (let f of scopeSplit) {
       scope = scope && scope[f];
-      if (scope instanceof Function)
-        return scope.bind(self)(...args);
+      if (scope instanceof Function) return scope.bind(self)(...args);
     }
     return;
   }
-  class FormSubscribe extends HTMLFormElement {
-    constructor() {
-      super();
-      this._lastCalled = 0;
-      this._interval = +(this.dataset.debounce || 0);
-      this._match = parseData(this.dataset.match);
-      this._notMatch = parseData(this.dataset.matchNot);
-      let el = this.dataset.targetEl;
-      if (el) {
-        this.el = document.querySelector(el);
+  class FormSubscribe {
+    /**
+     * @param {HTMLElement} el 
+     */
+    constructor(el) {
+      this.el = el;
+      this.form = el instanceof HTMLFormElement ? el : el.form;
+      if (!this.form) {
+        throw new Error("Element is not a form or does not have a form ancestor.");
       }
-    }
-    connectedCallback() {
-      let event = this.dataset.event;
-      if (!event)
-        return;
+      this._lastCalled = 0;
+      this._interval = +(el.dataset.debounce || 0);
+      this._match = parseData(el.dataset.match);
+      this._notMatch = parseData(el.dataset.matchNot);
+      let targetEl = el.dataset.targetEl;
+      if (targetEl) {
+        this.targetEl = document.querySelector(targetEl);
+      }
+      if (el.hasAttribute("data-onload")) {
+        this.form.requestSubmit();
+      }
+      let event = el.dataset.event;
+      if (!event) return;
       (this.el ?? document).addEventListener(event, this);
-    }
-    disconnectedCallback() {
-      let event = this.dataset.event;
-      if (!event)
-        return;
-      (this.el ?? document).removeEventListener(event, this);
     }
     /**
     * @param {CustomEvent} [e]
@@ -65,14 +63,13 @@
       let debounceInterval = this._interval;
       if (debounceInterval && this._lastCalled + debounceInterval > Date.now()) {
         this._lastCalled = Date.now();
-        if (this._id)
-          clearTimeout(this._id);
+        if (this._id) clearTimeout(this._id);
         this._id = setTimeout(() => this.handleEvent(e), debounceInterval);
         return;
       }
       this._lastCalled = Date.now();
-      let call = this.dataset.call;
-      let action = this.dataset.action;
+      let call = this.el.dataset.call;
+      let action = this.el.dataset.action;
       if (call) {
         callFunction(call, this, e);
       } else if (action) {
@@ -81,9 +78,9 @@
         }
         this._action(e);
       } else {
-        this.requestSubmit();
+        this.form.requestSubmit();
       }
     }
   }
-  customElements.define("form-subscribe", FormSubscribe, { extends: "form" });
+  window.defineTrait?.("x-subscribe", FormSubscribe);
 })();
