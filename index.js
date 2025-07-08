@@ -65,6 +65,12 @@ class FormSubscribe {
         if (!this.form) {
             throw new Error("Element is not a form or does not have a form ancestor.")
         }
+        this.submitter =
+            el instanceof HTMLFormElement
+                ? null
+            : el instanceof HTMLButtonElement
+                ? el
+            : el.closest('[type="submit"]')
         this._lastCalled = 0
         this._interval = +(el.dataset.debounce || 0)
         this._match = parseData(el.dataset.match)
@@ -75,12 +81,13 @@ class FormSubscribe {
         }
 
         if (el.hasAttribute('data-onload')) {
-            this.form.requestSubmit()
+            // @ts-ignore
+            this.form.requestSubmit(this.submitter)
         }
         let event = el.dataset.event
         if (!event) return
         // @ts-ignore
-        ;(this.el ?? document).addEventListener(event, this)
+        ;(this.targetEl ?? document).addEventListener(event, this)
     }
 
     /**
@@ -116,7 +123,8 @@ class FormSubscribe {
             // @ts-ignore
             this._action(e)
         } else {
-            this.form.requestSubmit()
+            // @ts-ignore
+            this.form.requestSubmit(this.submitter)
         }
     }
 
