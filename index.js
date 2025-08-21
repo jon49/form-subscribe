@@ -62,15 +62,16 @@ class FormSubscribe {
                 ? el
             // @ts-ignore
             : el.form
-        if (!this.form) {
-            throw new Error("Element is not a form or does not have a form ancestor.")
+
+        if (this.form) {
+            this.submitter =
+                el instanceof HTMLFormElement
+                    ? null
+                : el instanceof HTMLButtonElement
+                    ? el
+                : el.closest('[type="submit"]')
         }
-        this.submitter =
-            el instanceof HTMLFormElement
-                ? null
-            : el instanceof HTMLButtonElement
-                ? el
-            : el.closest('[type="submit"]')
+
         this._lastCalled = 0
         this._interval = +(el.dataset.debounce || 0)
         this._match = parseData(el.dataset.match)
@@ -124,11 +125,11 @@ class FormSubscribe {
             this._action(e)
         } else {
             // @ts-ignore
-            this.form.requestSubmit(this.submitter)
+            this.form?.requestSubmit(this.submitter)
         }
     }
 
 }
 
 // @ts-ignore
-window.defineTrait?.("x-subscribe", FormSubscribe)
+window.defineTrait?.("x-on", FormSubscribe)
