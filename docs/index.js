@@ -46,14 +46,15 @@
         this.targetEl = document.querySelector(targetEl);
       }
       if (el.hasAttribute("data-onload")) {
-        this.form.requestSubmit(this.submitter);
+        this.form?.requestSubmit(this.submitter);
+        this.runAction();
       }
       let event = el.dataset.event;
       if (!event) return;
       (this.targetEl ?? document).addEventListener(event, this);
     }
     /**
-    * @param {CustomEvent} [e]
+    * @param {Event} [e]
     * @returns {void}
     * */
     handleEvent(e) {
@@ -73,13 +74,22 @@
       if (call) {
         callFunction(call, this, e);
       } else if (action) {
-        if (!this._action) {
-          this._action = new Function("event", action).bind(this);
-        }
-        this._action(e);
+        this.runAction(e);
       } else {
         this.form?.requestSubmit(this.submitter);
       }
+    }
+    /**
+    * @param {Event} [e]
+    * @returns {void}
+    * */
+    runAction(e) {
+      if (!this._action) {
+        let action = this.el.dataset.action;
+        if (!action) return;
+        this._action = new Function("event", "$", "$$", action).bind(this.el);
+      }
+      this._action(e, (x) => document.querySelector(x), (x) => document.querySelectorAll(x));
     }
   }
   window.defineTrait?.("x-on", FormSubscribe);

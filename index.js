@@ -83,7 +83,8 @@ class FormSubscribe {
 
         if (el.hasAttribute('data-onload')) {
             // @ts-ignore
-            this.form.requestSubmit(this.submitter)
+            this.form?.requestSubmit(this.submitter)
+            this.runAction()
         }
         let event = el.dataset.event
         if (!event) return
@@ -92,7 +93,7 @@ class FormSubscribe {
     }
 
     /**
-    * @param {CustomEvent} [e]
+    * @param {Event} [e]
     * @returns {void}
     * */
     handleEvent(e) {
@@ -118,15 +119,25 @@ class FormSubscribe {
         if (call) {
             callFunction(call, this, e)
         } else if (action) {
-            if (!this._action) {
-                this._action = new Function("event", action).bind(this)
-            }
-            // @ts-ignore
-            this._action(e)
+            this.runAction(e)
         } else {
             // @ts-ignore
             this.form?.requestSubmit(this.submitter)
         }
+    }
+
+    /**
+    * @param {Event} [e]
+    * @returns {void}
+    * */
+    runAction(e) {
+        if (!this._action) {
+            let action = this.el.dataset.action
+            if (!action) return
+            this._action = new Function("event", "$", "$$", action).bind(this.el)
+        }
+        // @ts-ignore
+        this._action(e, x => document.querySelector(x), x => document.querySelectorAll(x))
     }
 
 }
