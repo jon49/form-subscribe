@@ -1,7 +1,7 @@
 {
-  "name": "form-subscribe",
-  "version": "0.3.1",
-  "description": "A custom element to listen to events that aren't in the hierarchy of bubbling.",
+  "name": "@html-traits/on",
+  "version": "0.0.0",
+  "description": "A trait to listen to events and perform an action or submit a form.",
   "bugs": {
     "url": "https://github.com/jon49/form-subscribe/issues"
   },
@@ -17,11 +17,9 @@
     "form",
     "html",
     "subscribe",
+    "eventing",
     "simple",
-    "customelement",
-    "custom-element",
-    "webcomponent",
-    "web-component",
+    "html-traits",
     "built-in"
   ],
   "devDependencies": {

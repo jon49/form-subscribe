@@ -19,7 +19,7 @@ form {
     <h2>Subscribe Events</h2>
     <form
         is=form-subscribe
-        data-event="submit"
+        data-events="submit"
         data-match="submitter: { id: 'first' }"
         data-action='this._x ??= 0; this._x++; $("#t-1").html(`Hello from First ${this._x} times!`)'
         >
@@ -31,7 +31,7 @@ form {
         <strong>Code</strong>
         <pre>
     is=form-subscribe
-    data-event="submit"
+    data-events="submit"
     data-match="submitter: { id: 'first' }"
     data-action='this._x ??= 0; this._x++; $("#t-1").html(`Hello from First ${this._x} times!`)'
         </pre>
@@ -40,7 +40,7 @@ form {
 
     <form
         is=form-subscribe
-        data-event="click"
+        data-events="click"
         data-target-el="#second"
         data-call='myApp.second'
         >
@@ -53,7 +53,7 @@ form {
         <strong>Code</strong>
         <pre>
     is=form-subscribe
-    data-event="click"
+    data-events="click"
     data-target-el="#second"
     data-call='myApp.second'
         </pre>
@@ -62,7 +62,7 @@ form {
 
     <form
         is=form-subscribe
-        data-event="input"
+        data-events="input"
         data-target-el="#third"
         data-action="$('#t-3').html(`<span>${event.target.value}</span>`)"
         data-debounce=500
@@ -75,7 +75,7 @@ form {
         <strong>Code</strong>
         <pre>
     is=form-subscribe
-    data-event="input"
+    data-events="input"
     data-target-el="#third"
     data-action="$('#t-3').html(`<span>${event.target.value}</span>`)"
     data-debounce=500
@@ -85,7 +85,7 @@ form {
 
     <form
         is=form-subscribe
-        data-event="submit"
+        data-events="submit"
         data-match-not="submitter: { id: 'fourth' }"
         data-call='myApp.fourth'
         >
@@ -99,7 +99,7 @@ form {
         <strong>Code</strong>
         <pre>
     is=form-subscribe
-    data-event="submit"
+    data-events="submit"
     data-match-not="submitter: { id: 'fourth' }"
     data-call='myApp.fourth'
         </pre>
@@ -108,7 +108,7 @@ form {
 
     <form
         is=form-subscribe
-        data-event="submit"
+        data-events="submit"
         data-match="submitter: { id: 'fifth' }"
         data-call='myApp.fifth'
         data-debounce=1e3
@@ -123,7 +123,7 @@ form {
         <strong>Code</strong>
         <pre>
     is=form-subscribe
-    data-event="submit"
+    data-events="submit"
     data-match="submitter: { id: 'fifth' }"
     data-call='myApp.fifth'
     data-debounce=1e3
@@ -133,7 +133,7 @@ form {
 
     <form
         is=form-subscribe
-        data-event="submit"
+        data-events="submit"
         data-match="submitter: { id: 'sixth' }"
         onsubmit="
             event.preventDefault();
@@ -150,7 +150,7 @@ form {
         <strong>Code</strong>
         <pre>
     is=form-subscribe
-    data-event="submit"
+    data-events="submit"
     data-match="submitter: { id: 'sixth' }"
     onsubmit="
         event.preventDefault();

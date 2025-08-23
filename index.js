@@ -29,31 +29,17 @@ function compare(base, other) {
     return true
 }
 
-/**
-* @param {string | undefined} functionName
-* @param {any[]} args
-* @param {any} self
-* @returns {Function | undefined}
-* */
-function callFunction(functionName, self, ...args) {
-    if (!functionName) return
-    let scope = window
-    let scopeSplit = functionName.split('.')
-    for (let f of scopeSplit) {
-        // @ts-ignore
-        scope = scope && scope[f]
-        if (scope instanceof Function) return scope.bind(self)(...args)
-    }
-    return
-}
+let $ = x => document.querySelector(x)
+let $$ = x => document.querySelectorAll(x)
 
-class FormSubscribe {
+class XOn {
 
     /**
      * @param {HTMLElement} el 
      */
     constructor(el) {
         this.el = el
+        this.action = el.dataset.action
         /**
          * @type {HTMLFormElement}
          */
@@ -81,15 +67,20 @@ class FormSubscribe {
             this.targetEl = document.querySelector(targetEl)
         }
 
-        if (el.hasAttribute('data-onload')) {
-            // @ts-ignore
-            this.form?.requestSubmit(this.submitter)
-            this.runAction()
+        let events = el.dataset.events?.split(" ")
+        if (!events?.length) return
+        for (let event of events) {
+            if (event === "load") {
+                if (this.action != null) {
+                    this.runAction()
+                } else {
+                    // @ts-ignore
+                    this.form?.requestSubmit(this.submitter)
+                }
+            } else {
+                (this.targetEl ?? document).addEventListener(event, this)
+            }
         }
-        let event = el.dataset.event
-        if (!event) return
-        // @ts-ignore
-        ;(this.targetEl ?? document).addEventListener(event, this)
     }
 
     /**
@@ -114,11 +105,7 @@ class FormSubscribe {
 
         this._lastCalled = Date.now()
 
-        let call = this.el.dataset.call
-        let action = this.el.dataset.action
-        if (call) {
-            callFunction(call, this, e)
-        } else if (action) {
+        if (this.action != null) {
             this.runAction(e)
         } else {
             // @ts-ignore
@@ -132,15 +119,15 @@ class FormSubscribe {
     * */
     runAction(e) {
         if (!this._action) {
-            let action = this.el.dataset.action
+            let action = this.action
             if (!action) return
             this._action = new Function("event", "$", "$$", action).bind(this.el)
         }
         // @ts-ignore
-        this._action(e, x => document.querySelector(x), x => document.querySelectorAll(x))
+        this._action(e, $, $$)
     }
 
 }
 
 // @ts-ignore
-window.defineTrait?.("x-on", FormSubscribe)
+window.defineTrait?.("on", XOn)
