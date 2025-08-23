@@ -1,5 +1,5 @@
 {
-  "name": "@html-traits/on",
+  "name": "html-traits-on",
   "version": "0.0.0",
   "description": "A trait to listen to events and perform an action or submit a form.",
   "bugs": {
